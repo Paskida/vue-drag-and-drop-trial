@@ -1,3 +1,7 @@
+Project to demonstrate coding on Vue.
+Drag and grop funcionality implemented.
+
+
 # project
 
 ## Project setup
