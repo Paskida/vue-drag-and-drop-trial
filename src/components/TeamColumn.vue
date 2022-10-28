@@ -1,16 +1,14 @@
 <template>
   <div class="card">
-    <div class="column">
-      <!--1 column-->
-      <h3>Product Management</h3>
+    <div v-for="team in teams" :key="team.id" class="column">
+      <h3>{{ team.title }}</h3>
       <draggable
         id="first"
         data-source="juju"
-        :list="list"
+        :list="team.names"
+        :move="checkMove"
         group="a"
         item-key="name"
-        @dragover.prevent
-        @dragenter.prevent
       >
         <template #item="{ element }">
           <div class="element">
@@ -19,70 +17,12 @@
         </template>
 
         <template #footer>
-          <div role="group">
-            <base-button @click="add">+</base-button>
+          <div role="group" class="btn">
+            <base-button @click="showNameAdd(team.id)">+</base-button>
           </div>
         </template>
       </draggable>
-    </div>
-
-    <!--2 column-->
-    <div class="column">
-      <h3>UX</h3>
-      <draggable
-        :list="list2"
-        group="a"
-        item-key="name"
-        @dragover.prevent
-        @dragenter.prevent
-      >
-        <template #item="{ element }">
-          <div class="element">
-            {{ element.name }}
-          </div>
-        </template>
-
-        <template #footer>
-          <div role="group">
-            <base-button @click="add2">+</base-button>
-          </div>
-        </template>
-      </draggable>
-    </div>
-
-    <!--3 column-->
-    <div class="column">
-      <h3>Engineering</h3>
-      <draggable :list="list3" group="a" item-key="name">
-        <template #item="{ element }">
-          <div class="element">
-            {{ element.name }}
-          </div>
-        </template>
-
-        <template #footer>
-          <div role="group">
-            <base-button @click="add3">+</base-button>
-          </div>
-        </template>
-      </draggable>
-    </div>
-    <!--4 column-->
-    <div class="column">
-      <h3>Admin</h3>
-      <draggable :list="list4" group="a" item-key="name">
-        <template #item="{ element }">
-          <div class="element">
-            {{ element.name }}
-          </div>
-        </template>
-
-        <template #footer>
-          <div role="group">
-            <base-button @click="add4">+</base-button>
-          </div>
-        </template>
-      </draggable>
+      <add-task @close="hideNameAdd" :open="addIsVisible"> </add-task>
     </div>
   </div>
 </template>
@@ -90,44 +30,87 @@
 <script>
 import draggable from "vuedraggable";
 import BaseButton from "./UI/BaseButton.vue";
-let id = 1;
+import AddTask from "./AddTask.vue";
+/* ; */
 export default {
+  emits: ["teamid"],
   components: {
     draggable,
     BaseButton,
+    AddTask,
+  },
+  provide() {
+    return {
+      addTask: this.addTask,
+    };
   },
   data() {
     return {
-      list: [
-        { id: 0, name: "Katherine" },
-        { id: 1, name: "David" },
-        { id: 2, name: "Dorian" },
-        { id: 3, name: "Daniel" },
+      addIsVisible: false,
+      teamid: null,
+      id: 10,
+      teams: [
+        {
+          title: "Not Urgent",
+          id: 0,
+          names: [
+            { id: 0, name: "Answer the letter" },
+            { id: 1, name: "Send the package" },
+            { id: 2, name: "Buy coffee" },
+            { id: 3, name: "Watch the video" },
+          ],
+        },
+        {
+          title: "Urgent",
+          id: 1,
+          names: [
+            { id: 4, name: "Call mum" },
+            { id: 5, name: "Check post" },
+            { id: 6, name: "Cook a dinner" },
+          ],
+        },
+        {
+          title: "In process",
+          id: 2,
+          names: [
+            { id: 7, name: "Read the book" },
+            { id: 8, name: "Cook breakfast" },
+          ],
+        },
+        {
+          title: "Done",
+          id: 3,
+          names: [{ id: 9, name: "Wash floors" }],
+        },
       ],
-      list2: [
-        { id: 4, name: "Greg" },
-        { id: 5, name: "Val" },
-        { id: 6, name: "Ming" },
-      ],
-      list3: [
-        { id: 7, name: "Tara" },
-        { id: 8, name: "Husein" },
-      ],
-      list4: [{ id: 9, name: "Nicky" }],
     };
   },
   methods: {
-    add: function () {
-      this.list.push({ name: "1 " + id, id: id++ });
+    checkMove(evt) {
+      const activeCol = document.querySelector(".active.column");
+
+      if (activeCol) {
+        activeCol.classList.remove("active");
+      }
+      evt.to.closest(".column").classList.add("active");
     },
-    add2: function () {
-      this.list2.push({ name: "2 " + id, id: id++ });
+    showNameAdd(teamid) {
+      this.addIsVisible = true;
+      this.teamid = teamid;
+      console.log(this.teamid);
     },
-    add3: function () {
-      this.list3.push({ name: "3 " + id, id: id++ });
+    hideNameAdd() {
+      this.addIsVisible = false;
+      this.teamid = null;
     },
-    add4: function () {
-      this.list4.push({ name: "4 " + id, id: id++ });
+    addTask(name) {
+      const newName = {
+        id: this.id++,
+        name: name,
+      };
+      this.teams[this.teamid].names.push(newName);
+      this.addIsVisible = false;
+      this.teamid = null;
     },
   },
 };
@@ -140,7 +123,7 @@ export default {
 }
 
 .column {
-  display: relative;
+  display: block;
   width: 100%;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
@@ -166,5 +149,13 @@ export default {
   color: rgb(185, 185, 185);
   overflow: hidden;
   background-color: rgb(185, 185, 185);
+}
+
+.active {
+  border: 3px solid rgb(255, 0, 242);
+}
+
+.form-control {
+  margin: 1rem 0;
 }
 </style>

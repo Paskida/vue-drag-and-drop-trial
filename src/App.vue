@@ -1,9 +1,7 @@
 <template>
-  <section>
-    <the-header title="Teams"></the-header>
-    <div>
-      <team-column></team-column>
-    </div>
+  <section @click="removeActive">
+    <the-header title="Tasks"></the-header>
+    <team-column></team-column>
   </section>
 </template>
 
@@ -14,6 +12,14 @@ export default {
   components: { TheHeader, TeamColumn },
   data() {
     return {};
+  },
+  methods: {
+    removeActive: function () {
+      const activeCol = document.querySelector(".active.column");
+      if (activeCol) {
+        activeCol.classList.remove("active");
+      }
+    },
   },
 };
 </script>
