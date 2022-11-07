@@ -1,11 +1,11 @@
 <template>
   <div class="card">
-    <div v-for="team in teams" :key="team.id" class="column">
-      <h3>{{ team.title }}</h3>
+    <div v-for="task in tasks" :key="task.id" class="column">
+      <h3>{{ task.title }}</h3>
       <draggable
         id="first"
         data-source="juju"
-        :list="team.names"
+        :list="task.names"
         :move="checkMove"
         group="a"
         item-key="name"
@@ -18,7 +18,7 @@
 
         <template #footer>
           <div role="group" class="btn">
-            <base-button @click="showNameAdd(team.id)">+</base-button>
+            <base-button @click="showNameAdd(task.id)">+</base-button>
           </div>
         </template>
       </draggable>
@@ -33,7 +33,7 @@ import BaseButton from "./UI/BaseButton.vue";
 import AddTask from "./AddTask.vue";
 /* ; */
 export default {
-  emits: ["teamid"],
+  emits: ["taskid"],
   components: {
     draggable,
     BaseButton,
@@ -47,9 +47,9 @@ export default {
   data() {
     return {
       addIsVisible: false,
-      teamid: null,
+      taskid: null,
       id: 10,
-      teams: [
+      tasks: [
         {
           title: "Not Urgent",
           id: 0,
@@ -94,23 +94,23 @@ export default {
       }
       evt.to.closest(".column").classList.add("active");
     },
-    showNameAdd(teamid) {
+    showNameAdd(taskid) {
       this.addIsVisible = true;
-      this.teamid = teamid;
-      console.log(this.teamid);
+      this.taskid = taskid;
+      console.log(this.taskid);
     },
     hideNameAdd() {
       this.addIsVisible = false;
-      this.teamid = null;
+      this.taskid = null;
     },
     addTask(name) {
       const newName = {
         id: this.id++,
         name: name,
       };
-      this.teams[this.teamid].names.push(newName);
+      this.tasks[this.taskid].names.push(newName);
       this.addIsVisible = false;
-      this.teamid = null;
+      this.taskid = null;
     },
   },
 };

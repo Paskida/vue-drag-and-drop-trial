@@ -1,15 +1,15 @@
 <template>
   <section @click="removeActive">
     <the-header title="Tasks"></the-header>
-    <team-column></team-column>
+    <task-column></task-column>
   </section>
 </template>
 
 <script>
 import TheHeader from "./components/Layout/TheHeader.vue";
-import TeamColumn from "./components/TeamColumn.vue";
+import TaskColumn from "./components/TaskColumn.vue";
 export default {
-  components: { TheHeader, TeamColumn },
+  components: { TheHeader, TaskColumn },
   data() {
     return {};
   },
